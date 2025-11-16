@@ -16,3 +16,8 @@
         port: 3306
         state: started
         timeout: 30
+- name: Generate deployment report
+      template:
+        src: templates/report.j2
+        dest: /home/pslearner/deployment_report.txt
+        owner: pslearner
