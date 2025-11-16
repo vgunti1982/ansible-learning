@@ -1,0 +1,41 @@
+---
+- name: Deploy Sample Application
+  hosts: web
+  become: true
+  vars:
+    app_src: "{{ playbook_dir }}/sample_app"
+    app_dest: /opt/myapp
+    app_port: 9090
+  tasks:
+    - name: Ensure app directory exists on host
+      file:
+        path: "{{ app_dest }}"
+        state: directory
+    - name: Copy application code to host
+      copy:
+        src: "{{ app_src }}/"
+        dest: "{{ app_dest }}/"
+        owner: pslearner
+        mode: '0755'
+    - name: Generate environment file
+      template:
+        src: templates/app.env.j2
+        dest: "{{ app_dest }}/.env"
+        owner: pslearner
+    - name: Deploy systemd service unit
+      template:
+        src: templates/myapp.service.j2
+        dest: /etc/systemd/system/myapp.service
+      notify: Reload systemd
+  handlers:
+    - name: Reload systemd
+      command: systemctl daemon-reload
+- name: Start and enable the app service
+  hosts: web
+  become: true
+  tasks:
+    - name: Launch myapp service
+      service:
+        name: myapp
+        state: started
+enabled: true
