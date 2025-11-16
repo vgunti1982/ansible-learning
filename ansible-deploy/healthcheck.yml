@@ -21,3 +21,4 @@
         src: templates/report.j2
         dest: /home/pslearner/deployment_report.txt
         owner: pslearner
+        mode: '0644'
