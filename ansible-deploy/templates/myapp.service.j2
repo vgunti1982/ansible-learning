@@ -1,0 +1,10 @@
+[Unit]
+Description=Sample HTTP App
+After=network.target
+[Service]
+WorkingDirectory=/opt/myapp
+EnvironmentFile=-/opt/myapp/.env
+ExecStart=/usr/bin/python3 -m http.server ${APP_PORT}
+Restart=always
+[Install]
+WantedBy=multi-user.target
