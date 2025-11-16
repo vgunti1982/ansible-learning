@@ -1,0 +1,54 @@
+---
+- name: Configure Deployment Environment
+  hosts: all
+  become: true
+  tasks:
+    - name: Install core packages from local cache
+      apt:
+        name:
+          - nginx
+          - python3
+          - python3-pip
+          - mysql-server
+        state: present
+        update_cache: no
+    - name: Ensure Nginx is running & enabled
+      service:
+        name: nginx
+        state: started
+        enabled: true
+    - name: Ensure MySQL is running & enabled
+      service:
+        name: mysql
+        state: started
+        enabled: true
+    - name: Install and configure UFW offline
+      block:
+        - apt:
+            name: ufw
+            state: present
+            update_cache: no
+        - ufw:
+            rule: allow
+            port: "22"
+            proto: tcp
+        - ufw:
+            rule: allow
+            port: "80"
+            proto: tcp
+        - ufw:
+            rule: allow
+            port: "3306"
+            proto: tcp
+        - ufw:
+            state: enabled
+    - name: Create deploy user
+      user:
+        name: deploy
+        shell: /bin/bash
+        create_home: yes
+    - name: Grant deploy user passwordless sudo
+      copy:
+        dest: /etc/sudoers.d/deploy
+        content: |
+          deploy ALL=(ALL) NOPASSWD:ALL
