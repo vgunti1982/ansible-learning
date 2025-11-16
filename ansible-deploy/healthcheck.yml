@@ -1,0 +1,12 @@
+---
+- name: Health-Check Application and Database
+  hosts: web
+  become: true
+  vars:
+    base_url: "http://localhost:9090"
+  tasks:
+    - name: Check application endpoint
+      uri:
+        url: "{{ base_url }}/"
+        method: GET
+        status_code: 200
