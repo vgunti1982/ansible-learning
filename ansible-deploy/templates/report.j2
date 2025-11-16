@@ -1,0 +1,10 @@
+Deployment Health Check Report
+==============================
+Application Endpoint
+--------------------
+URL: {{ base_url }}/
+Status: {{ app_check.status }}
+Database Connectivity
+---------------------
+Wait time: {{ db_wait.elapsed }} seconds
+Result: {{ 'OK' if db_wait.elapsed < 30 else 'TIMEOUT' }}
